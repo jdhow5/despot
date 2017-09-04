@@ -1,0 +1,1089 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>RegTestAlgorithmEditor</class>
+ <widget class="QDialog" name="RegTestAlgorithmEditor">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>387</width>
+    <height>638</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Algorithm Editor</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QTabWidget" name="m_algorithmTabWidg">
+     <property name="currentIndex">
+      <number>1</number>
+     </property>
+     <widget class="QWidget" name="m_flatTab">
+      <attribute name="title">
+       <string>Flat</string>
+      </attribute>
+      <layout class="QFormLayout" name="formLayout">
+       <item row="0" column="0">
+        <layout class="QGridLayout" name="flatGrid">
+         <item row="0" column="0">
+          <widget class="QLabel" name="flatAlgoLabel">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Algorithms:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QLabel" name="flatPassLabel">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Pass</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2">
+          <widget class="QLabel" name="flatFailLabel">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Fail</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QRadioButton" name="m_flatNonblockTBtn">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">m_flatNonblockGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item row="1" column="2">
+          <widget class="QRadioButton" name="m_flatNonblockFBtn">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">m_flatNonblockGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QCheckBox" name="m_flatContChkBox">
+           <property name="text">
+            <string>Controllability</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QRadioButton" name="m_flatContTBtn">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">m_flatContGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item row="2" column="2">
+          <widget class="QRadioButton" name="m_flatContFBtn">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">m_flatContGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item row="3" column="0" colspan="3">
+          <layout class="QGridLayout" name="flatBddLabelGrid">
+           <item row="0" column="0">
+            <widget class="QLabel" name="flatBddLabel">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="autoFillBackground">
+              <bool>true</bool>
+             </property>
+             <property name="text">
+              <string>BDD:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="Line" name="flatBddLine">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item row="4" column="0">
+          <widget class="QCheckBox" name="m_bddFlatNonblockChkBox">
+           <property name="text">
+            <string>BDD Nonblocking</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1">
+          <widget class="QRadioButton" name="m_bddFlatNonblockTBtn">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="cursor">
+            <cursorShape>UpArrowCursor</cursorShape>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">m_bddFlatNonblockGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item row="4" column="2">
+          <widget class="QRadioButton" name="m_bddFlatNonblockFBtn">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="cursor">
+            <cursorShape>ArrowCursor</cursorShape>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">m_bddFlatNonblockGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item row="5" column="0">
+          <widget class="QCheckBox" name="m_untimedContChkBox">
+           <property name="text">
+            <string>Untimed Controllability</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="1">
+          <widget class="QRadioButton" name="m_untimedContTBtn">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="cursor">
+            <cursorShape>UpArrowCursor</cursorShape>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">m_untimedContGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item row="5" column="2">
+          <widget class="QRadioButton" name="m_untimedContFBtn">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="cursor">
+            <cursorShape>ArrowCursor</cursorShape>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">m_untimedContGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item row="6" column="0">
+          <widget class="QCheckBox" name="m_sdContChkBox">
+           <property name="text">
+            <string>SD Controllability</string>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="1">
+          <widget class="QRadioButton" name="m_sdContTBtn">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">m_sdContGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item row="6" column="2">
+          <widget class="QRadioButton" name="m_sdContFBtn">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">m_sdContGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item row="7" column="0">
+          <widget class="QCheckBox" name="m_ptbChkBox">
+           <property name="text">
+            <string>Proper Time Behavior</string>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="1">
+          <widget class="QRadioButton" name="m_ptbTBtn">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">m_ptbGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item row="7" column="2">
+          <widget class="QRadioButton" name="m_ptbFBtn">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">m_ptbGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item row="8" column="0">
+          <widget class="QCheckBox" name="m_sspbChkBox">
+           <property name="text">
+            <string>S-Singular Prohibitable Behavior</string>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="1">
+          <widget class="QRadioButton" name="m_sspbTBtn">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">m_sspbGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item row="8" column="2">
+          <widget class="QRadioButton" name="m_sspbFBtn">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">m_sspbGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item row="9" column="0">
+          <widget class="QCheckBox" name="m_plantCompleteChkBox">
+           <property name="text">
+            <string>Plant Completeness</string>
+           </property>
+          </widget>
+         </item>
+         <item row="9" column="1">
+          <widget class="QRadioButton" name="m_plantCompleteTBtn">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">m_plantCompleteGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item row="9" column="2">
+          <widget class="QRadioButton" name="m_plantCompleteFBtn">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">m_plantCompleteGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item row="10" column="0">
+          <widget class="QCheckBox" name="m_alfChkBox">
+           <property name="text">
+            <string>Activity Loop Free</string>
+           </property>
+          </widget>
+         </item>
+         <item row="10" column="1">
+          <widget class="QRadioButton" name="m_alfTBtn">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">m_alfGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item row="10" column="2">
+          <widget class="QRadioButton" name="m_alfFBtn">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">m_alfGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QCheckBox" name="m_flatNonblockChkBox">
+           <property name="text">
+            <string>Nonblocking</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="m_hiscTab">
+      <attribute name="title">
+       <string>HISC</string>
+      </attribute>
+      <layout class="QFormLayout" name="formLayout_2">
+       <item row="0" column="0">
+        <layout class="QGridLayout" name="hiscGrid">
+         <item row="17" column="0">
+          <widget class="QCheckBox" name="m_bddLDLWContChkBox">
+           <property name="text">
+            <string>LD Level-Wise Controllability</string>
+           </property>
+          </widget>
+         </item>
+         <item row="17" column="1">
+          <widget class="QRadioButton" name="m_bddLDLWContTBtn">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">m_bddLDLWContGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item row="17" column="2">
+          <widget class="QRadioButton" name="m_bddLDLWContFBtn">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">m_bddLDLWContGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item row="6" column="1">
+          <widget class="QRadioButton" name="m_ldIConsistentTBtn">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">m_ldIConsistentGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item row="6" column="2">
+          <widget class="QRadioButton" name="m_ldIConsistentFBtn">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">m_ldIConsistentGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item row="7" column="0">
+          <widget class="QCheckBox" name="m_ldLWNonblockChkBox">
+           <property name="text">
+            <string>LD Level-Wise Nonblocking</string>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="1">
+          <widget class="QRadioButton" name="m_ldLWNonblockTBtn">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">m_ldLWNonblockGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item row="7" column="2">
+          <widget class="QRadioButton" name="m_ldLWNonblockFBtn">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">m_ldLWNonblockGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item row="8" column="0">
+          <widget class="QCheckBox" name="m_ldLWContChkBox">
+           <property name="text">
+            <string>LD Level-Wise Controllability</string>
+           </property>
+          </widget>
+         </item>
+         <item row="15" column="0">
+          <widget class="QCheckBox" name="m_bddLDIConsistentChkBox">
+           <property name="text">
+            <string>LD Interface Consistent</string>
+           </property>
+          </widget>
+         </item>
+         <item row="15" column="1">
+          <widget class="QRadioButton" name="m_bddLDIConsistentTBtn">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">m_bddLDIConsistentGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item row="15" column="2">
+          <widget class="QRadioButton" name="m_bddLDIConsistentFBtn">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">m_bddLDIConsistentGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item row="16" column="0">
+          <widget class="QCheckBox" name="m_bddLDLWNonblockChkBox">
+           <property name="text">
+            <string>LD Level-Wise Nonblocking</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="hiscAlgoLabel">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Algorithms:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QCheckBox" name="m_hiscNonblockChkBox">
+           <property name="text">
+            <string>Nonblocking</string>
+           </property>
+          </widget>
+         </item>
+         <item row="11" column="0">
+          <widget class="QCheckBox" name="m_bddHiscContChkBox">
+           <property name="text">
+            <string>BDD Controllability</string>
+           </property>
+          </widget>
+         </item>
+         <item row="10" column="1">
+          <widget class="QRadioButton" name="m_bddHiscNonblockTBtn">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">m_bddHiscNonblockGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item row="10" column="2">
+          <widget class="QRadioButton" name="m_bddHiscNonblockFBtn">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">m_bddHiscNonblockGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item row="6" column="0">
+          <widget class="QCheckBox" name="m_ldIConsistentChkBox">
+           <property name="text">
+            <string>LD Interface Consistent</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QCheckBox" name="m_subsysLDIConsistentChkBox">
+           <property name="text">
+            <string>Subsystem LD I-Consistent</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QRadioButton" name="m_subsysLDIConsistentTBtn">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="cursor">
+            <cursorShape>UpArrowCursor</cursorShape>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">m_subsysLDIConsistentGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="QCheckBox" name="m_subsysLDNonblockChkBox">
+           <property name="text">
+            <string>Subsystem LD Nonblocking</string>
+           </property>
+          </widget>
+         </item>
+         <item row="16" column="1">
+          <widget class="QRadioButton" name="m_bddLDLWNonblockTBtn">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">m_bddLDLWNonblockGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item row="16" column="2">
+          <widget class="QRadioButton" name="m_bddLDLWNonblockFBtn">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">m_bddLDLWNonblockGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item row="9" column="0" colspan="3">
+          <layout class="QGridLayout" name="hiscBddLabelGrid">
+           <item row="0" column="1">
+            <widget class="Line" name="hiscBddLine">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="hiscBddLabel">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="autoFillBackground">
+              <bool>true</bool>
+             </property>
+             <property name="text">
+              <string>BDD:</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item row="11" column="1">
+          <widget class="QRadioButton" name="m_bddHiscContTBtn">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">m_bddHiscContGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item row="11" column="2">
+          <widget class="QRadioButton" name="m_bddHiscContFBtn">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">m_bddHiscContGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item row="8" column="2">
+          <widget class="QRadioButton" name="m_ldLWContFBtn">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">m_ldLWContGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item row="5" column="0">
+          <widget class="QCheckBox" name="m_subsysLDContChkBox">
+           <property name="text">
+            <string>Subsystem LD Controllable</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1">
+          <widget class="QRadioButton" name="m_subsysLDNonblockTBtn">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="cursor">
+            <cursorShape>UpArrowCursor</cursorShape>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">m_subsysLDNonblockGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QCheckBox" name="m_hiscContChkBox">
+           <property name="text">
+            <string>Controllability</string>
+           </property>
+          </widget>
+         </item>
+         <item row="12" column="2">
+          <widget class="QRadioButton" name="m_bddSubsysLDIConsistentFBtn">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="cursor">
+            <cursorShape>ArrowCursor</cursorShape>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">m_bddSubsysLDIConsistentGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item row="13" column="0">
+          <widget class="QCheckBox" name="m_bddSubsysLDNonblockChkBox">
+           <property name="text">
+            <string>Subsystem LD Nonblocking</string>
+           </property>
+          </widget>
+         </item>
+         <item row="13" column="1">
+          <widget class="QRadioButton" name="m_bddSubsysLDNonblockTBtn">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="cursor">
+            <cursorShape>UpArrowCursor</cursorShape>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">m_bddSubsysLDNonblockGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item row="13" column="2">
+          <widget class="QRadioButton" name="m_bddSubsysLDNonblockFBtn">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="cursor">
+            <cursorShape>ArrowCursor</cursorShape>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">m_bddSubsysLDNonblockGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item row="14" column="0">
+          <widget class="QCheckBox" name="m_bddSubsysLDContChkBox">
+           <property name="text">
+            <string>Subsystem LD Controllable</string>
+           </property>
+          </widget>
+         </item>
+         <item row="14" column="1">
+          <widget class="QRadioButton" name="m_bddSubsysLDContTBtn">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">m_bddSubsysLDContGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item row="14" column="2">
+          <widget class="QRadioButton" name="m_bddSubsysLDContFBtn">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">m_bddSubsysLDContGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QRadioButton" name="m_hiscNonblockTBtn">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">m_hiscNonblockGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QRadioButton" name="m_hiscContTBtn">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">m_hiscContGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item row="2" column="2">
+          <widget class="QRadioButton" name="m_hiscContFBtn">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">m_hiscContGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item row="8" column="1">
+          <widget class="QRadioButton" name="m_ldLWContTBtn">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">m_ldLWContGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item row="0" column="2">
+          <widget class="QLabel" name="hiscFailLabel">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Fail</string>
+           </property>
+          </widget>
+         </item>
+         <item row="10" column="0">
+          <widget class="QCheckBox" name="m_bddHiscNonblockChkBox">
+           <property name="text">
+            <string>BDD Nonblocking</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="2">
+          <widget class="QRadioButton" name="m_hiscNonblockFBtn">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">m_hiscNonblockGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QLabel" name="hiscPassLabel">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Pass</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="2">
+          <widget class="QRadioButton" name="m_subsysLDNonblockFBtn">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="cursor">
+            <cursorShape>ArrowCursor</cursorShape>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">m_subsysLDNonblockGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item row="12" column="0">
+          <widget class="QCheckBox" name="m_bddSubsysLDIConsistentChkBox">
+           <property name="text">
+            <string>Subsystem LD I-Consistent</string>
+           </property>
+          </widget>
+         </item>
+         <item row="12" column="1">
+          <widget class="QRadioButton" name="m_bddSubsysLDIConsistentTBtn">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="cursor">
+            <cursorShape>UpArrowCursor</cursorShape>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">m_bddSubsysLDIConsistentGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item row="5" column="1">
+          <widget class="QRadioButton" name="m_subsysLDContTBtn">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">m_subsysLDContGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item row="5" column="2">
+          <widget class="QRadioButton" name="m_subsysLDContFBtn">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">m_subsysLDContGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item row="3" column="2">
+          <widget class="QRadioButton" name="m_subsysLDIConsistentFBtn">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="cursor">
+            <cursorShape>ArrowCursor</cursorShape>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">m_subsysLDIConsistentGroup</string>
+           </attribute>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="m_algorithmBtnBox">
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+ <buttongroups>
+  <buttongroup name="m_bddSubsysLDNonblockGroup"/>
+  <buttongroup name="m_bddLDLWNonblockGroup"/>
+  <buttongroup name="m_subsysLDNonblockGroup"/>
+  <buttongroup name="m_untimedContGroup"/>
+  <buttongroup name="m_bddHiscNonblockGroup"/>
+  <buttongroup name="m_hiscNonblockGroup"/>
+  <buttongroup name="m_bddFlatNonblockGroup"/>
+  <buttongroup name="m_ldLWNonblockGroup"/>
+  <buttongroup name="m_bddLDIConsistentGroup"/>
+  <buttongroup name="m_bddLDLWContGroup"/>
+  <buttongroup name="m_subsysLDIConsistentGroup"/>
+  <buttongroup name="m_alfGroup"/>
+  <buttongroup name="m_subsysLDContGroup"/>
+  <buttongroup name="m_ptbGroup"/>
+  <buttongroup name="m_hiscContGroup"/>
+  <buttongroup name="m_flatNonblockGroup"/>
+  <buttongroup name="m_bddSubsysLDContGroup"/>
+  <buttongroup name="m_ldIConsistentGroup"/>
+  <buttongroup name="m_bddHiscContGroup"/>
+  <buttongroup name="m_bddSubsysLDIConsistentGroup"/>
+  <buttongroup name="m_ldLWContGroup"/>
+  <buttongroup name="m_flatContGroup"/>
+  <buttongroup name="m_sdContGroup"/>
+  <buttongroup name="m_plantCompleteGroup"/>
+  <buttongroup name="m_sspbGroup"/>
+ </buttongroups>
+</ui>
