@@ -1,4 +1,4 @@
-# despot
+# DESpot
 In this repository you will find the code I have written for DESpot, a discrete-event system (DES) software research tool.  
 
 The user interface files were designed using Qt Designer.
