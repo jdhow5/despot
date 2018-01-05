@@ -1,7 +1,7 @@
 # DESpot
 In this repository I have included the source code for DESpot v.1.7.0 in DESpot_v1_7.tar.bz2.  I have also included the individual files that I contributed to DESpot during the development of the regression test suite.  The regression test suite was my Master of Engeering in Software Engineering project at McMaster University.
 
-DESpot is a discrete-event system (DES) software research tool.  The regression testing suite allows future developers to ensure their modifications to DESpot's system checking algorithms provide the correct results and do not introduce new bugs.  It also allows users to quickly check chosen system properties while creating the DES in DESpot's "Project Editor".
+DESpot is a discrete-event system (DES) software research tool.  The regression test suite allows future developers to ensure their modifications to DESpot's system checking algorithms provide correct results and do not introduce new bugs.  It also allows users to quickly check chosen system properties while creating the DES in DESpot's "Project Editor".
 
 The regression test suite was developed with C++ and Qt 5.8.  I used Qt Creator as the IDE and Qt Designer to create the user interface forms.
 
