@@ -86,7 +86,7 @@
            <item>
             <widget class="QPushButton" name="m_addRTAlgorithmsBtn">
              <property name="text">
-              <string>Add Algorithms</string>
+              <string>Edit Algorithms</string>
              </property>
             </widget>
            </item>

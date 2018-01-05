@@ -39,17 +39,17 @@ public:
         QString name;
     }
     flatCont, flatNonblock, bddFlatNonblock, untimedCont, sdCont, ptb, sspb, plantComplete, alf,
-    hiscCont, hiscNonblock, subsysLDIConsistent, subsysLDNonblock, subsysLDCont, ldIConsistent, ldLWNonblock, ldLWCont,
-    bddHiscCont, bddHiscNonblock, bddSubsysLDIConsistent, bddSubsysLDNonblock, bddSubsysLDCont, bddLDIConsistent, bddLDLWNonblock, bddLDLWCont, *subsys;
+    hiscCont, hiscNonblock, subsysLDIConsistent, subsysLDNonblock, subsysLDCont, ldIConsistent,
+    ldLWNonblock, ldLWCont, bddHiscCont, bddHiscNonblock, bddSubsysLDIConsistent, bddSubsysLDNonblock,
+    bddSubsysLDCont, bddLDIConsistent, bddLDLWNonblock, bddLDLWCont, *subsys;
 
     void configureTabs(const QString& projType);
-
-    QMap<QString, QString> algoMap;
 
     QList<algorithmChoice> algorithmList;
     QMap<QString, QString> getAlgoMap();
     QMap<QString, QString> getSubsysMap();
-
+    void populateAlgorithms(QMap<QString, QString> algos);
+    void populateSubsystems(QMap<QString, QString> subsystems);
 
 private slots:
     void on_m_algorithmBtnBox_accepted();
@@ -65,6 +65,7 @@ private:
     void createAlgorithmList();
     void configureRadioButtons();
     void configureSubsysRadioButtons();
+    bool checkResults();
 
     //if adding new algorithm add checkbox, 2 radiobutton, buttongroup, label here
     //if adding subsystem-specific algorithm, exclude radiobuttons

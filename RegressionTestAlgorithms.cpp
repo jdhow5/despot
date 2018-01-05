@@ -70,8 +70,8 @@ DesHierProject* RegressionTestAlgorithms::project()
 }
 
 //if adding algorithm, add here or under runHierAlgo()
-//also add algorithm code as other are below
-//only need to return 0 if pass or 1 if fail
+//also add algorithm code as function
+//only need to return 0 if pass or 1 if fail, or 2 if error
 int RegressionTestAlgorithms::runFlatAlgo(const QString& algorithm)
 {
     FlatProjIntegrityAlgo integAlgo;

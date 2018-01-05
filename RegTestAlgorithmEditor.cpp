@@ -13,6 +13,7 @@
 #include <QApplication>
 #include <QVariant>
 #include <QAction>
+#include <QMessageBox>
 
 RegTestAlgorithmEditor::RegTestAlgorithmEditor(QWidget *parent, QString projType) :
     QDialog(parent),
@@ -402,7 +403,7 @@ void RegTestAlgorithmEditor::createAlgorithms()
         alf.name = "Activity Loop Free";
         createAlgorithmList();
     }
-
+    //subsystems don't have pass or fail radio buttons
     else if(projectType == "HISC")
     {
         hiscCont.algo = m_hiscContChkBox;
@@ -524,20 +525,64 @@ void RegTestAlgorithmEditor::configureRadioButtons()
     }
 }
 
+void RegTestAlgorithmEditor::populateAlgorithms(QMap<QString, QString> algos)
+{
+    for(int i = 0; i < algorithmList.size(); ++i)
+    {
+        if(algos.contains(algorithmList[i].name))
+        {
+            algorithmList[i].algo->setEnabled(true);
+            algorithmList[i].algo->setChecked(true);
+            if(algos.value(algorithmList[i].name) == "Pass")
+            {
+                algorithmList[i].tBtn->setChecked(true);
+            }
+            else if(algos.value(algorithmList[i].name) == "Fail")
+            {
+                algorithmList[i].fBtn->setChecked(true);
+            }
+        }
+    }
+}
+
+void RegTestAlgorithmEditor::populateSubsystems(QMap<QString, QString> subsystems)
+{
+    for(int i = 0; i < subsystemAlgoList.size(); ++i)
+    {
+        if(subsystems.contains(QString::fromStdWString(subsystemAlgoList[i])))
+        {
+            subsys[i].algo->setEnabled(true);
+            subsys[i].algo->setChecked(true);
+            if(subsystems.value(QString::fromStdWString(subsystemAlgoList[i])) == "Pass")
+            {
+                subsys[i].tBtn->setChecked(true);
+            }
+            else if(subsystems.value(QString::fromStdWString(subsystemAlgoList[i])) == "Fail")
+            {
+                subsys[i].fBtn->setChecked(true);
+            }
+        }
+    }
+}
+
 //get users chosen algorithms with results and return map to regression test editor
 QMap<QString, QString> RegTestAlgorithmEditor::getAlgoMap()
 {
+    QMap<QString, QString> algoMap;
     for(int i=0; i<algorithmList.size(); ++i)
     {
         if(!algorithmList[i].name.contains("Subsystem"))
         {
-            if(algorithmList[i].tBtn->isChecked() && algorithmList[i].algo->isChecked())
+            if(algorithmList[i].algo->isChecked())
             {
-                algoMap.insert(algorithmList[i].name, "Pass");
-            }
-            else if(algorithmList[i].fBtn->isChecked() && algorithmList[i].algo->isChecked())
-            {
-                algoMap.insert(algorithmList[i].name, "Fail");
+                if(algorithmList[i].tBtn->isChecked())
+                {
+                    algoMap.insert(algorithmList[i].name, "Pass");
+                }
+                else
+                {
+                    algoMap.insert(algorithmList[i].name, "Fail");
+                }
             }
         }
         else
@@ -571,10 +616,46 @@ QMap<QString, QString> RegTestAlgorithmEditor::getSubsysMap()
     return subsysMap;
 }
 
+bool RegTestAlgorithmEditor::checkResults()
+{
+    if(this->windowTitle() == "Algorithm Editor")
+    {
+        for(int i=0; i<algorithmList.size(); ++i)
+        {
+            if(!algorithmList[i].name.contains("Subsystem") && algorithmList[i].algo->isChecked())
+            {
+                if(!algorithmList[i].tBtn->isChecked() && !algorithmList[i].fBtn->isChecked())
+                {
+                    QMessageBox::warning(this, "Algorithm Editor", "Please select a result for each algorithm.", QMessageBox::Ok);
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    else
+    {
+        for(int i=0; i<subsystemAlgoList.size(); ++i)
+        {
+            if(subsys[i].algo->isChecked())
+            {
+                if(!subsys[i].tBtn->isChecked() && !subsys[i].fBtn->isChecked())
+                {
+                    QMessageBox::warning(this, "Subsystem Editor", "Please select a result for each algorithm.", QMessageBox::Ok);
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+}
+
 void RegTestAlgorithmEditor::on_m_algorithmBtnBox_accepted()
 {
-    this->accept();
-    this->close();
+    if(checkResults()) this->accept();
+    else return;
+    //this->close();
 }
 
 

@@ -317,7 +317,7 @@ void RegressionTestSerializer::writeTypeEntry(QXmlStreamWriter *regTestWriter, Q
     regTestWriter->writeStartElement("type");
     regTestWriter->writeAttribute("name", item->text(0));
     QString result = item->text(1);
-    regTestWriter->writeTextElement("result", result);
+    if(!result.isEmpty()) regTestWriter->writeTextElement("result", result);
     for(int i=0; i<item->childCount(); ++i)
     {
         writeTypeEntry(regTestWriter, item->child(i));

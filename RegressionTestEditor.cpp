@@ -89,9 +89,9 @@ void RegressionTestEditor::createActions()
     m_addTestAct->setStatusTip(tr("Add an existing test suite to the current regression test"));
     connect(m_addTestAct, SIGNAL(triggered()), this, SLOT(onAddTest()));
 
-    m_addAlgoAct = new QAction(tr("Add &Algorithm"), this);
+    m_addAlgoAct = new QAction(tr("Edit &Algorithms"), this);
     m_addAlgoAct->setShortcut(tr("Ctrl+A"));
-    m_addAlgoAct->setStatusTip(tr("Add an algorithm to the selected project"));
+    m_addAlgoAct->setStatusTip(tr("Add or remove algorithms on the selected project"));
     connect(m_addAlgoAct, SIGNAL(triggered()), this, SLOT(onAddAlgorithms()));
 
     m_removeProjectAct = new QAction(tr("&Remove Project"), this);
@@ -206,34 +206,52 @@ void RegressionTestEditor::enableOptions()
 
 void RegressionTestEditor::closeEvent(QCloseEvent *event)
 {
-    if(closeAttempt())
+    if(isModified)
     {
-        if(isModified)
+        QString titleString = "Confirm Close - ";
+        QString closeString;
+        if(curSaveFile.isEmpty())
         {
-            QString titleString = "Confirm Close - ";
-            if(curSaveFile.isEmpty()) titleString += "*.desr";
-            else titleString += QFileInfo(curSaveFile).fileName();
-            QString closeString = "Close without saving changes?";
-            switch(QMessageBox::question(this, titleString, closeString, QMessageBox::Yes|QMessageBox::Save|QMessageBox::Cancel, QMessageBox::Cancel))
-            {
-                case QMessageBox::Yes:
-                    event->accept();
-                    break;
-                case QMessageBox::Save:
+            titleString += "*.desr";
+            closeString = QString("Do you want to save the changes to the unsaved test?");
+        }
+        else
+        {
+            titleString += QFileInfo(curSaveFile).fileName();
+            closeString = QString("Do you want to save the changes to " + QFileInfo(curSaveFile).fileName() + "?");
+        }
+        switch(QMessageBox::question(this, titleString, closeString, QMessageBox::Yes|QMessageBox::Cancel|QMessageBox::No))
+        {
+            case QMessageBox::Yes:
+                if(closeAttempt())
+                {
+                    if(!checkSave()) {event->ignore(); return;}
                     onSaveTest();
                     event->accept();
                     break;
-                case QMessageBox::Cancel:
-                    event->ignore();
-                    return;
-                default:
-                    event->ignore();
-                    return;
-            }
+                }
+                else {event->ignore(); return;}
+            case QMessageBox::Cancel:
+                event->ignore();
+                return;
+            case QMessageBox::No:
+                if(closeAttempt())
+                {
+                    event->accept();
+                    break;
+                }
+                else {event->ignore(); return;}
+            default:
+                event->ignore();
+                break;
         }
-        else event->accept();
     }
-    else {event->ignore(); return;}
+    else
+    {
+        if(closeAttempt()) event->accept();
+        else event->ignore();
+    }
+
     if(!DespotForm::onCloseForm())
     {
         event->ignore();
@@ -254,24 +272,38 @@ void RegressionTestEditor::closeEditors(bool &okToClose)
     if(isModified)
     {
         QString titleString = "Confirm Close - ";
-        if(curSaveFile.isEmpty()) titleString += "*.desr";
-        else titleString += QFileInfo(curSaveFile).fileName();
-        QString closeString = "Close without saving changes?";
-        switch(QMessageBox::question(this, titleString, closeString, QMessageBox::Yes|QMessageBox::Save|QMessageBox::Cancel, QMessageBox::Cancel))
+        QString closeString;
+        if(curSaveFile.isEmpty())
+        {
+            titleString += "*.desr";
+            closeString = QString("You wanna save the changes to the unsaved test?");
+        }
+        else
+        {
+            titleString += QFileInfo(curSaveFile).fileName();
+            closeString = QString("You wanna save the changes to " + QFileInfo(curSaveFile).fileName() + "?");
+        }
+        switch(QMessageBox::question(this, titleString, closeString, QMessageBox::Yes|QMessageBox::Cancel|QMessageBox::No))
         {
             case QMessageBox::Yes:
-                okToClose = true;
-                isModified = false;
-                this->close();
-                return;
-            case QMessageBox::Save:
-                onSaveTest();
-                okToClose = true;
-                this->close();
-                return;
+                if(closeAttempt())
+                {
+                    onSaveTest();
+                    okToClose = true;
+                    this->close();
+                    return;
+                }
             case QMessageBox::Cancel:
                 okToClose = false;
                 return;
+            case QMessageBox::No:
+                if(closeAttempt())
+                {
+                    okToClose = true;
+                    isModified = false;
+                    this->close();
+                    return;
+                }
             default:
                 okToClose = false;
                 return;
@@ -279,15 +311,15 @@ void RegressionTestEditor::closeEditors(bool &okToClose)
     }
     else
     {
-        okToClose = true;
-        this->close();
-        return;
+        if(closeAttempt()) {okToClose = true; this->close();}
+        else {okToClose = false;}
     }
 }
 
-void RegressionTestEditor::handleDoubleClickEvent(QTreeWidgetItem* item,int col)
+void RegressionTestEditor::handleDoubleClickEvent(QTreeWidgetItem* item, int col)
 {
     ui->m_regressionTestWidg->setCurrentItem(item, col);
+    QTreeWidgetItem *crtItem = ui->m_regressionTestWidg->currentItem();
     if(isTest())
     {
         //read test info and populate new edit-only editor with it
@@ -301,6 +333,20 @@ void RegressionTestEditor::handleDoubleClickEvent(QTreeWidgetItem* item,int col)
         preTestWidg->show();
         preTestWidg->setCurFile(fileName);
         preTestWidg->updateWindowTitle(false);
+    }
+    else if(isProject()) onAddAlgorithms();
+    else if((!isProject() && crtItem->text(0).contains("Subsystem")) || (crtItem->parent()->parent()))
+    {
+        if(!crtItem->parent()->parent())
+        {
+            ui->m_regressionTestWidg->setCurrentItem(crtItem->parent());
+            addSubsystems(crtItem->text(0), crtItem->parent()->text(0));
+        }
+        else
+        {
+            ui->m_regressionTestWidg->setCurrentItem(crtItem->parent()->parent());
+            addSubsystems(crtItem->parent()->text(0), crtItem->parent()->parent()->text(0));
+        }
     }
     else onAddAlgorithms();
 }
@@ -344,16 +390,29 @@ void RegressionTestEditor::addChild(QTreeWidgetItem *parent, const QString& algo
 //check if project has already been added to tree widget
 void RegressionTestEditor::repeatedFile(const DESpot::DesProject* project, const QString& projType)
 {
-    if(m_projectMap.contains(project->getName()))
+    QMap<std::wstring, std::wstring>::iterator iter = m_projectMap.begin();
+    std::wstring projectName = project->getName();
+    std::wstring fileName = project->getFileName();
+    while(iter != m_projectMap.end())
     {
-        QMessageBox *msgBox = new QMessageBox();
-        msgBox->setText(tr("That project has already been added."));
-        msgBox->setIcon(QMessageBox::Warning);
-        msgBox->exec();
-        return;
+        if(iter.value() == fileName)
+        {
+            QMessageBox *msgBox = new QMessageBox();
+            msgBox->setText(tr("That project has already been added."));
+            msgBox->setIcon(QMessageBox::Warning);
+            msgBox->exec();
+            return;
+        }
+        if(iter.key() == projectName)
+        {
+            int count = 0;
+            projectName = multipleNames(projectName, count);
+        }
+        ++iter;
     }
-    else m_projectMap.insert(project->getName(), project->getFileName());
-    addRoot(QString::fromStdWString(project->getName()), projType);
+
+    m_projectMap.insert(projectName, fileName);
+    addRoot(QString::fromStdWString(projectName), projType);
     enableOptions();
 }
 
@@ -361,18 +420,42 @@ void RegressionTestEditor::repeatedFile(const DESpot::DesProject* project, const
 void RegressionTestEditor::repeatedTest(const QString& fileName)
 {
     if(fileName.isEmpty()) return;
-    QString testName = QFileInfo(fileName).baseName();
-    if(m_projectMap.contains(testName.toStdWString()))
+
+    QMap<std::wstring, std::wstring>::iterator iter = m_projectMap.begin();
+    std::wstring testName = QFileInfo(fileName).baseName().toStdWString();
+    while(iter != m_projectMap.end())
     {
-        QMessageBox *msgBox = new QMessageBox();
-        msgBox->setText(tr("That test has already been added."));
-        msgBox->setIcon(QMessageBox::Warning);
-        msgBox->exec();
-        return;
+        if(iter.value() == fileName.toStdWString())
+        {
+            QMessageBox *msgBox = new QMessageBox();
+            msgBox->setText(tr("That test has already been added."));
+            msgBox->setIcon(QMessageBox::Warning);
+            msgBox->exec();
+            return;
+        }
+        if(iter.key() == testName)
+        {
+            int count = 0;
+            testName = multipleNames(testName, count);
+        }
+        ++iter;
     }
-    else m_projectMap.insert(testName.toStdWString(), fileName.toStdWString());
-    addRoot(testName, "Test");
+
+    m_projectMap.insert(testName, fileName.toStdWString());
+    addRoot(QString::fromStdWString(testName), "Test");
     enableOptions();
+}
+
+std::wstring RegressionTestEditor::multipleNames(std::wstring &name, int &count)
+{
+    ++count;
+    QString counter = QString::number(count);
+    QString newName = QString::fromStdWString(name) + "(" + counter + ")";
+    if(m_projectMap.contains(newName.toStdWString()))
+    {
+        return multipleNames(name, count);
+    }
+    else return newName.toStdWString();
 }
 
 void RegressionTestEditor::onAddProject()
@@ -383,25 +466,16 @@ void RegressionTestEditor::onAddProject()
 //remove project from project map and tree widget
 void RegressionTestEditor::onRemoveProject()
 {
-    if(ui->m_regressionTestWidg->currentItem()->isSelected())
+    if(ui->m_regressionTestWidg->currentItem()->isSelected() && isProject())
     {
-        if(isProject())
+        m_projectMap.remove(ui->m_regressionTestWidg->currentItem()->text(0).toStdWString());
+        if(ui->m_regressionTestWidg->topLevelItemCount() == 1)
         {
-            QString projName = ui->m_regressionTestWidg->currentItem()->text(0);
-            if(m_projectMap.contains(projName.toStdWString()))
-            {
-                m_projectMap.remove(projName.toStdWString());
-            }
-
-            if(ui->m_regressionTestWidg->topLevelItemCount() == 1)
-            {
-                ui->m_regressionTestWidg->clear();
-                disableOptions();
-            }
-            else delete ui->m_regressionTestWidg->currentItem();
-            updateWindowTitle(true);
+            ui->m_regressionTestWidg->clear();
+            disableOptions();
         }
-        else return;
+        else delete ui->m_regressionTestWidg->currentItem();
+        updateWindowTitle(true);
     }
     else return;
 }
@@ -417,21 +491,16 @@ void RegressionTestEditor::onAddTest()
 //remove test from project map and tree widget
 void RegressionTestEditor::onRemoveTest()
 {
-    if(ui->m_regressionTestWidg->currentItem()->isSelected())
+    if(ui->m_regressionTestWidg->currentItem()->isSelected() && isTest())
     {
-        if(isTest())
+        m_projectMap.remove(ui->m_regressionTestWidg->currentItem()->text(0).toStdWString());
+        if(ui->m_regressionTestWidg->topLevelItemCount() == 1)
         {
-            m_projectMap.remove(ui->m_regressionTestWidg->currentItem()->text(0).toStdWString());
-
-            if(ui->m_regressionTestWidg->topLevelItemCount() == 1)
-            {
-                ui->m_regressionTestWidg->clear();
-                disableOptions();
-            }
-            else delete ui->m_regressionTestWidg->currentItem();
-            updateWindowTitle(true);
+            ui->m_regressionTestWidg->clear();
+            disableOptions();
         }
-        else return;
+        else delete ui->m_regressionTestWidg->currentItem();
+        updateWindowTitle(true);
     }
     else return;
 }
@@ -462,6 +531,20 @@ void RegressionTestEditor::onOpenProject()
             }
             lastUsedDir = QFileInfo(fileName).dir().absolutePath();
         }
+    }
+    catch_display_ex()
+}
+
+void RegressionTestEditor::load(const QString &testName)
+{
+    try
+    {
+        RegressionTestSerializer *openTest = new RegressionTestSerializer(ui->m_regressionTestWidg, m_projectMap);
+        m_projectMap = openTest->getMapToTest(testName);
+        delete openTest;
+        setCurFile(testName);
+        updateWindowTitle(false);
+        enableOptions();
     }
     catch_display_ex()
 }
@@ -500,13 +583,22 @@ void RegressionTestEditor::onClearProjectAlgorithms()
 //clear all items from the tree widget
 void RegressionTestEditor::onClearAll()
 {
-    while(ui->m_regressionTestWidg->topLevelItemCount() > 0)
+    switch(QMessageBox::question(this, "Confirm Clear All", "Are you sure you want to clear the editor?", QMessageBox::Yes|QMessageBox::Cancel))
     {
-        ui->m_regressionTestWidg->setCurrentItem(ui->m_regressionTestWidg->topLevelItem(0));
-        if(isProject()) onRemoveProject();
-        else onRemoveTest();
+        case QMessageBox::Yes:
+            while(ui->m_regressionTestWidg->topLevelItemCount() > 0)
+            {
+                ui->m_regressionTestWidg->setCurrentItem(ui->m_regressionTestWidg->topLevelItem(0));
+                if(isProject()) onRemoveProject();
+                else onRemoveTest();
+            }
+            updateWindowTitle(true);
+            return;
+        case QMessageBox::Cancel:
+            return;
+        default:
+            return;
     }
-    updateWindowTitle(true);
 }
 
 void RegressionTestEditor::onSaveTest()
@@ -706,48 +798,89 @@ void RegressionTestEditor::createOutputData(QTreeWidgetItem *currentItem, Regres
     QTreeWidgetItem *curItem = currentItem;
     QString projName = curItem->text(0);
     QString projType = curItem->text(1);
-    QTreeWidgetItem* parent = output->repeatProject(projName, projType);
-    for(int j=0; j<curItem->childCount(); ++j)
+    if(QFileInfo(QString::fromStdWString(projMap.value(projName.toStdWString()))).exists())
     {
-        QTreeWidgetItem* currentAlgo = curItem->child(j);
-        QString currentAlgoName = currentAlgo->text(0);
-        QString currentAlgoResult = currentAlgo->text(1);
-        if(projMap.contains(projName.toStdWString()))
+        QTreeWidgetItem* parent = output->repeatProject(projName, projType);
+        for(int j=0; j<curItem->childCount(); ++j)
         {
-            if(currentAlgoName.contains("Subsystem") && currentAlgo->childCount() > 0)
+            QTreeWidgetItem* currentAlgo = curItem->child(j);
+            QString currentAlgoName = currentAlgo->text(0);
+            QString currentAlgoResult = currentAlgo->text(1);
+            if(projMap.contains(projName.toStdWString()))
             {
-                QTreeWidgetItem* subsysParent = output->repeatSubsysAlgo(parent, currentAlgoName);
-                for(int k=0; k<currentAlgo->childCount(); ++k)
+                if(currentAlgoName.contains("Subsystem") && currentAlgo->childCount() > 0)
                 {
-                    QTreeWidgetItem* subsysToTest = currentAlgo->child(k);
-                    if(!output->repeatSubsys(subsysParent, subsysToTest))
+                    QTreeWidgetItem* subsysParent = output->repeatSubsysAlgo(parent, currentAlgoName);
+                    for(int k=0; k<currentAlgo->childCount(); ++k)
                     {
-                        DESpot::DesProject* currentProject = DESpot::DesProject::load(projMap.find(projName.toStdWString()).value());
-                        int algoResult = getAlgorithmResults(currentProject, currentAlgoName, subsysToTest->text(0));
+                        QTreeWidgetItem* subsysToTest = currentAlgo->child(k);
+                        if(!output->repeatSubsys(subsysParent, subsysToTest))
+                        {
+                            DESpot::DesProject* currentProject = DESpot::DesProject::load(projMap.value(projName.toStdWString()));
+                            int algoResult = getAlgorithmResults(currentProject, currentAlgoName, subsysToTest->text(0));
+                            switch(algoResult)
+                            {
+                            case 0: //subsystem test returns true
+                            {
+                                output->addVoidChild(subsysParent, subsysToTest->text(0), subsysToTest->text(1), "Pass");
+                                break;
+                            }
+                            case 1: //subsystem test returns false
+                            {
+                                output->addVoidChild(subsysParent, subsysToTest->text(0), subsysToTest->text(1), "Fail");
+                                break;
+                            }
+                            case 2: //subsystem test returns error
+                            {
+                                QString subsysErr = currentAlgoName + " - " + subsysToTest->text(0);
+                                output->errMap.insert(projName, subsysErr);
+                                output->addVoidChild(subsysParent, subsysToTest->text(0), subsysToTest->text(1), "Error");
+                                break;
+                            }
+                            case 3: //integrity test fail
+                            {
+                                output->outputIntegrityError(curItem, parent);
+                                j = curItem->childCount();
+                                k = currentAlgo->childCount();
+                                break;
+                            }
+                            default:
+                                break;
+                            }
+                            delete currentProject;
+                        }
+                    }
+                    if(subsysParent->childCount() == 0) delete subsysParent;
+                }
+                else
+                {
+                    if(!output->repeatAlgo(parent, currentAlgoName))
+                    {
+                        DESpot::DesProject* currentProject = DESpot::DesProject::load(projMap.value(projName.toStdWString()));
+                        int algoResult = getAlgorithmResults(currentProject, currentAlgoName, "");
+
                         switch(algoResult)
                         {
-                        case 0: //subsystem test returns true
+                        case 0: //test returns true
                         {
-                            output->addVoidChild(subsysParent, subsysToTest->text(0), subsysToTest->text(1), "Pass");
+                            output->addVoidChild(parent, currentAlgoName, currentAlgoResult, "Pass");
                             break;
                         }
-                        case 1: //subsystem test returns false
+                        case 1: //test returns false
                         {
-                            output->addVoidChild(subsysParent, subsysToTest->text(0), subsysToTest->text(1), "Fail");
+                            output->addVoidChild(parent, currentAlgoName, currentAlgoResult, "Fail");
                             break;
                         }
-                        case 2: //subsystem test returns error
+                        case 2: //test returns error
                         {
-                            QString subsysErr = currentAlgoName + " - " + subsysToTest->text(0);
-                            output->errMap.insert(projName, subsysErr);
-                            output->addVoidChild(subsysParent, subsysToTest->text(0), subsysToTest->text(1), "Error");
+                            output->errMap.insert(projName, currentAlgoName);
+                            output->addVoidChild(parent, currentAlgoName, currentAlgoResult, "Error");
                             break;
                         }
                         case 3: //integrity test fail
                         {
                             output->outputIntegrityError(curItem, parent);
                             j = curItem->childCount();
-                            k = currentAlgo->childCount();
                             break;
                         }
                         default:
@@ -756,47 +889,15 @@ void RegressionTestEditor::createOutputData(QTreeWidgetItem *currentItem, Regres
                         delete currentProject;
                     }
                 }
-                if(subsysParent->childCount() == 0) delete subsysParent;
-            }
-            else
-            {
-                if(!output->repeatAlgo(parent, currentAlgoName))
-                {
-                    DESpot::DesProject* currentProject = DESpot::DesProject::load(projMap.find(projName.toStdWString()).value());
-                    int algoResult = getAlgorithmResults(currentProject, currentAlgoName, "");
-
-                    switch(algoResult)
-                    {
-                    case 0: //test returns true
-                    {
-                        output->addVoidChild(parent, currentAlgoName, currentAlgoResult, "Pass");
-                        break;
-                    }
-                    case 1: //test returns false
-                    {
-                        output->addVoidChild(parent, currentAlgoName, currentAlgoResult, "Fail");
-                        break;
-                    }
-                    case 2: //test returns error
-                    {
-                        output->errMap.insert(projName, currentAlgoName);
-                        output->addVoidChild(parent, currentAlgoName, currentAlgoResult, "Error");
-                        break;
-                    }
-                    case 3: //integrity test fail
-                    {
-                        output->outputIntegrityError(curItem, parent);
-                        j = curItem->childCount();
-                        break;
-                    }
-                    default:
-                        break;
-                    }
-                    delete currentProject;
-                }
             }
         }
     }
+    else
+    {
+        QTreeWidgetItem *locationError = output->addRoot(projName, "Project not found");
+        output->errMap.insert(locationError->text(0), locationError->text(1));
+    }
+
 }
 
 //gets the results from algorithm test and returns to createOutputData()
@@ -833,31 +934,31 @@ void RegressionTestEditor::getAlgorithms()
 {
     QMap<QString, QString> copyAlgoMap = algorithmEditor->getAlgoMap();
     if(copyAlgoMap.isEmpty()) return;
+    algorithmEditor->close();
     QTreeWidgetItem* crtProj = ui->m_regressionTestWidg->currentItem();
     QMap<QString, QString>::iterator iter;
 
-    for(int i=0; i<crtProj->childCount(); ++i)
+    int i = 0;
+    while(i < crtProj->childCount())
     {
-        iter = copyAlgoMap.begin();
-        if(!iter.key().contains("Subsystem"))
+        if(crtProj->childCount() == 0) break;
+        if(!crtProj->child(i)->text(0).contains("Subsystem"))
         {
-            while(iter != copyAlgoMap.end())
-            {
-                if(crtProj->childCount() == 0) break;
-                if(crtProj->child(i)->text(0) == iter.key())
-                {
-                    delete crtProj->child(i);
-                }
-                ++iter;
-            }
+            delete crtProj->child(i);
         }
+        else if(!copyAlgoMap.contains(crtProj->child(i)->text(0)))
+        {
+            delete crtProj->child(i);
+        }
+        else ++i;
     }
+
     iter = copyAlgoMap.begin();
     while(iter != copyAlgoMap.end())
     {
         if(!iter.key().contains("Subsystem"))
         {
-        addChild(crtProj, iter.key(), iter.value());
+            addChild(crtProj, iter.key(), iter.value());
         }
         else addSubsystems(iter.key(), crtProj->text(0));
         ++iter;
@@ -880,6 +981,7 @@ void RegressionTestEditor::addSubsystems(const QString&  crtAlgo, const QString&
 
     crtSubsysAlgo = crtAlgo;
     subsysEditor = new RegTestAlgorithmEditor(this, subsysList, crtAlgo);
+    populateSubsystemEditor();
     connect(subsysEditor, SIGNAL(accepted()), this, SLOT(getSubsystems()));
     subsysEditor->exec();
 }
@@ -893,18 +995,10 @@ void RegressionTestEditor::getSubsystems()
 
     //remove chosen subsystems from algorithm if they already exist
     QTreeWidgetItem* subsysAlgo = getSubsysAlgo();
-    for(int i=0; i<subsysAlgo->childCount(); ++i)
+
+    while(subsysAlgo->childCount() != 0)
     {
-        subsysIter = copySubsysMap.begin();
-        while(subsysIter != copySubsysMap.end())
-        {
-            if(subsysAlgo->childCount() == 0) break;
-            if(subsysAlgo->child(i)->text(0) == subsysIter.key())
-            {
-                delete subsysAlgo->child(i);
-            }
-            ++subsysIter;
-        }
+        delete subsysAlgo->child(0);
     }
 
     //add subsystems to tree widget
@@ -934,6 +1028,7 @@ void RegressionTestEditor::onAddAlgorithms()
     {
         QString projType = ui->m_regressionTestWidg->currentItem()->text(1);
         algorithmEditor = new RegTestAlgorithmEditor(this, projType);
+        populateAlgorithmEditor();
     }
     else if(isTest())
     {
@@ -948,12 +1043,14 @@ void RegressionTestEditor::onAddAlgorithms()
         ui->m_regressionTestWidg->setCurrentItem(ui->m_regressionTestWidg->currentItem()->parent()->parent());
         QString projType = ui->m_regressionTestWidg->currentItem()->text(1);
         algorithmEditor = new RegTestAlgorithmEditor(this, projType);
+        populateAlgorithmEditor();
     }
     else
     {
         ui->m_regressionTestWidg->setCurrentItem(ui->m_regressionTestWidg->currentItem()->parent());
         QString projType = ui->m_regressionTestWidg->currentItem()->text(1);
         algorithmEditor = new RegTestAlgorithmEditor(this, projType);
+        populateAlgorithmEditor();
     }
     connect(algorithmEditor, SIGNAL(accepted()), this, SLOT(getAlgorithms()));
     algorithmEditor->exec();
@@ -966,8 +1063,45 @@ void RegressionTestEditor::onRemoveAlgorithm()
     updateWindowTitle(true);
 }
 
+void RegressionTestEditor::populateAlgorithmEditor()
+{
+    QTreeWidgetItem *crtItem = ui->m_regressionTestWidg->currentItem();
+    if(crtItem->childCount() > 0)
+    {
+        QMap<QString, QString> algos;
+        for(int i = 0; i < crtItem->childCount(); ++i)
+        {
+            algos.insert(crtItem->child(i)->text(0), crtItem->child(i)->text(1));
+        }
+        algorithmEditor->populateAlgorithms(algos);
+    }
+}
+
+void RegressionTestEditor::populateSubsystemEditor()
+{
+    QTreeWidgetItem *crtProj = ui->m_regressionTestWidg->currentItem();
+    if(crtProj->childCount() > 0)
+    {
+        QMap<QString, QString> subsystems;
+        for(int i = 0; i < crtProj->childCount(); ++i)
+        {
+            if(crtProj->child(i)->text(0) == crtSubsysAlgo)
+            {
+                for(int j = 0; j < crtProj->child(i)->childCount(); ++j)
+                {
+                    subsystems.insert(crtProj->child(i)->child(j)->text(0), crtProj->child(i)->child(j)->text(1));
+                }
+            }
+        }
+        subsysEditor->populateSubsystems(subsystems);
+    }
+}
+
 void RegressionTestEditor::onRunTest()
 {
+    ui->m_runTestBtn->setDisabled(true);
+    qApp->processEvents();
+
     regTestOutput = new RegressionTestOutput();
     int emptyChildCount = 0;
     QList<QString> testedList;
@@ -975,15 +1109,18 @@ void RegressionTestEditor::onRunTest()
     emptyChildCount = startTesting(ui->m_regressionTestWidg, emptyChildCount, regTestOutput, runProjMap, testedList);
     if(ui->m_regressionTestWidg->topLevelItemCount() == emptyChildCount)
     {
-        QMessageBox* errTestBox = new QMessageBox();
+        QMessageBox *errTestBox = new QMessageBox();
         errTestBox->setIcon(QMessageBox::Warning);
         errTestBox->setText("Please add an algorithm to run on a project.");
         errTestBox->exec();
         delete regTestOutput;
+        ui->m_runTestBtn->setEnabled(true);
         return;
     }
     regTestOutput->createFalseOutputData();
     regTestOutput->getTestErrors();
     regTestOutput->show();
+    qApp->processEvents();
     connect(this, SIGNAL(closingForm(bool&)), regTestOutput, SLOT(closeOutput(bool&)));
+    ui->m_runTestBtn->setDisabled(false);
 }

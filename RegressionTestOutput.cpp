@@ -22,7 +22,6 @@ RegressionTestOutput::RegressionTestOutput(QWidget *parent) :
     ui->m_regTestFalseOutputWidg->setColumnCount(3);
     ui->m_regTestFalseOutputWidg->setHeaderLabels(QStringList() << "Name" << "Expected" << "Actual");
     ui->m_regTestOutputTabWidg->setCurrentIndex(0);
-    connect(this->parent(), SIGNAL(closingForm(bool&)), this, SLOT(closeOutput(bool&)));
 }
 
 RegressionTestOutput::~RegressionTestOutput()

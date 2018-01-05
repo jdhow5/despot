@@ -36,6 +36,7 @@ public:
     int startTesting(QTreeWidget* treeWidget, int numEmptyChildren, RegressionTestOutput *output, QMap<std::wstring, std::wstring> &projMap, QList<QString> &repeatTests);
     void setCurFile(const QString &file);
     void updateWindowTitle(bool modified);
+    void load(const QString & testName);
 
 signals:
     void closingForm(bool&);
@@ -76,6 +77,7 @@ private:
 
     void repeatedFile(const DESpot::DesProject* project, const QString& projType);
     void repeatedTest(const QString& fileName);
+    std::wstring multipleNames(std::wstring &name, int &count);
     void createActions();
     void setupMenu();
     void configureConnections();
@@ -88,6 +90,8 @@ private:
     int getAlgorithmResults(DESpot::DesProject* project, const QString& algorithm, const QString& subsys);
     void addSubsystems(const QString&  crtAlgo, const QString& crtProj);
     QTreeWidgetItem* getSubsysAlgo();
+    void populateAlgorithmEditor();
+    void populateSubsystemEditor();
 
     void onOpenProject();
 
